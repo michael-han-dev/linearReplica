@@ -24,6 +24,7 @@ export default function GQLProvider({ children }: PropsWithChildren) {
       fetchOptions: () => {
         const token = getToken()
 
+
         return token
           ? {
               headers: { authorization: `Bearer ${token}` },

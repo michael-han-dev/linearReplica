@@ -21,6 +21,9 @@ const SigninPage = () => {
       router.push('/')
     }
   }
+  const handleSignupRedirect = () => {
+    router.push('/signup')
+  }
 
   return (
     <div className="bg-white rounded-md border p-4 w-full shadow-sm">
@@ -53,6 +56,15 @@ const SigninPage = () => {
           </Button>
         </div>
       </form>
+      <div className="mt-4 text-center">
+        <Button
+          onClick={handleSignupRedirect}
+          variant="ghost"
+          color="secondary"
+        >
+          Don't have an account? Sign up
+        </Button>
+      </div>
     </div>
   )
 }
