@@ -1,5 +1,5 @@
 import { db } from '@/db/db'
-import { InsertIssues, SelectIssues, issues, users } from '@/db/schema'
+import { InsertIssues, SelectIssues, issues, users, projects, InsertProjects } from '@/db/schema'
 import { GQLContext } from '@/types'
 import { getUserFromToken, signin, signup } from '@/utils/auth'
 import { and, asc, desc, eq, or, sql } from 'drizzle-orm'
@@ -77,6 +77,17 @@ const resolvers = {
 
       return data
     },
+    projects: async (_, __, ctx: GQLContext) => {
+      if (!ctx.user)
+        throw new GraphQLError('UNAUTHORIZED', { extensions: { code: 401 } })
+
+      const data = await db.query.projects.findMany({
+        where: eq(projects.userId, ctx.user.id),
+        orderBy: [desc(projects.createdAt)],
+      })
+
+      return data
+    },
   },
   Mutation: {
     deleteIssue: async (_, { id }, ctx) => {
@@ -137,6 +148,52 @@ const resolvers = {
       }
 
       return { ...data.user, token: data.token }
+    },
+    createProject: async (
+      _,
+      { input }: { input: Omit<InsertProjects, 'userId'> },
+      ctx: GQLContext
+    ) => {
+      if (!ctx.user)
+        throw new GraphQLError('UNAUTHORIZED', { extensions: { code: 401 } })
+
+      console.log('Creating project with input:', input)
+
+      try {
+        const project = await db
+          .insert(projects)
+          .values({ ...input, 
+            userId: ctx.user.id,
+            status: input.status || 'backlog'})
+          .returning()
+
+        console.log('Created project:', project[0])
+
+        if (!project[0]) {
+          throw new Error('Failed to create project')
+        }
+
+        return project[0]
+      } catch (error) {
+        console.error('Error in createProject resolver:', error)
+        throw new GraphQLError('Failed to create project', {
+          extensions: { code: 'DATABASE_ERROR', originalError: error },
+        })
+      }
+    },
+    editProject: async (_, { input }, ctx: GQLContext) => {
+      if (!ctx.user)
+        throw new GraphQLError('UNAUTHORIZED', { extensions: { code: 401 } })
+
+      const { id, ...updates } = input
+
+      const project = await db
+        .update(projects)
+        .set(updates)
+        .where(eq(projects.id, id))
+        .returning()
+
+      return project[0]
     },
   },
 }

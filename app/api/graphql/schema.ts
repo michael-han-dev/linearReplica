@@ -48,9 +48,37 @@ input IssuesFilterInput {
   statuses: [IssueStatus]
 }
 
+type Project {
+  id: ID!
+  name: String!
+  content: String!
+  status: ProjectStatus!
+  createdAt: String!
+}
+
+enum ProjectStatus {
+  BACKLOG
+  INPROGRESS
+  DONE
+}
+
+input CreateProjectInput {
+  name: String!
+  content: String!
+  status: ProjectStatus
+}
+
+input EditProjectInput {
+  name: String
+  content: String
+  status: ProjectStatus
+  id: ID!
+}
+
 type Query {
   me: User
   issues(input: IssuesFilterInput): [Issue]!
+  projects: [Project]!
 }
 
 type Mutation {
@@ -59,7 +87,24 @@ type Mutation {
   editIssue(input: EditIssueInput!): Issue!
   createUser(input: AuthInput!): User
   signin(input: AuthInput!): User
+  createProject(input: CreateProjectInput!): Project!
+  editProject(input: EditProjectInput!): Project!
 }
+
+mutation {
+  createProject(input: {
+    name: "Test Project",
+    content: "This is a test project",
+    status: BACKLOG
+  }) {
+    id
+    name
+    content
+    status
+    createdAt
+  }
+}
+
 `
 
 export default schema

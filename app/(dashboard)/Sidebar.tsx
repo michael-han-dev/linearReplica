@@ -5,7 +5,7 @@ import Link from 'next/link'
 const links = [
   { href: '/', name: 'Issues', Icon: Boxes },
   { href: '/projects', name: 'Projects', Icon: LayoutGrid },
-  { href: '/settings', name: 'Settings', Icon: Settings },
+  //{ href: '/settings', name: 'Settings', Icon: Settings },
 ]
 
 const Sidebar = () => {

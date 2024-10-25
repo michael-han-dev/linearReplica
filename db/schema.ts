@@ -54,6 +54,9 @@ export const projects = sqliteTable('projects', {
   name: text('name').notNull(),
   userId: text('userId').notNull(),
   content: text('content').notNull(),
+  status: text('status', { enum: ['backlog', 'todo', 'inprogress', 'done'] })
+    .default('backlog')
+    .notNull(),
   createdAt: createdAt(),
 })
 
