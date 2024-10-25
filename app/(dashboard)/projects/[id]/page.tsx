@@ -3,7 +3,8 @@
 import { useRouter } from 'next/navigation'
 import { useQuery } from '@urql/next'
 import { IssuesQuery } from '@/gql/issuesQuery'
-import Issue from '@/components/Issue'
+import Issue from '@/app/_components/Issue';
+
 
 const ProjectDetailPage = ({ params }: { params: { id: string } }) => {
   const router = useRouter()
